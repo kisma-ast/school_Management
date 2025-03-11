@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/kisma-ast/school_Management.git'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                script {
+                    dir('backend') {
+                        sh 'composer install'
+                        sh 'php artisan migrate --seed'
+                    }
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                script {
+                    dir('frontend') {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+
+       /* stage('Run Tests') {
+            steps {
+                script {
+                    dir('backend') {
+                        sh 'php artisan test'
+                    }
+                    dir('frontend') {
+                        sh 'npm test'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Déploiement du frontend et du backend en cours..."
+                // Ajoute ici ton script de déploiement (Docker, SSH, ou autre)
+            }
+        }*/
+    }
+}
